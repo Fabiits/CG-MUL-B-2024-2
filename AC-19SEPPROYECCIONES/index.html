@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Proyección de Cubo</title>
+    <style>
+        canvas {
+            border: 1px solid black;
+        }
+        .container {
+            display: flex;
+            justify-content: space-around;
+        }
+        .canvas-title {
+            text-align: center;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Proyección de un Cubo</h1>
+    <div class="container">
+        <div>
+            <canvas id="perspectiva" width="300" height="300"></canvas>
+            <div class="canvas-title">Perspectiva</div>
+        </div>
+        <div>
+            <canvas id="ortografica" width="300" height="300"></canvas>
+            <div class="canvas-title">Ortográfica</div>
+        </div>
+        <div>
+            <canvas id="isometrica" width="300" height="300"></canvas>
+            <div class="canvas-title">Isométrica</div>
+        </div>
+    </div>
+
+    <script>
+        class Linea {
+            constructor(x1, y1, x2, y2) {
+                this.x1 = x1;
+                this.y1 = y1;
+                this.x2 = x2;
+                this.y2 = y2;
+            }
+
+            dibujar(contexto) {
+                contexto.beginPath();
+                contexto.moveTo(this.x1, this.y1);
+                contexto.lineTo(this.x2, this.y2);
+                contexto.stroke();
+            }
+        }
+
+        class Cuadrado {
+            constructor(puntos) {
+                this.puntos = puntos; // Array de puntos [[x1, y1], [x2, y2], [x3, y3], [x4, y4]]
+            }
+
+            dibujar(contexto) {
+                for (let i = 0; i < this.puntos.length; i++) {
+                    let next = (i + 1) % this.puntos.length;
+                    let linea = new Linea(this.puntos[i][0], this.puntos[i][1], this.puntos[next][0], this.puntos[next][1]);
+                    linea.dibujar(contexto);
+                }
+            }
+        }
+
+        class Cubo {
+            constructor(cuadradoFrontal, cuadradoTrasero) {
+                this.cuadradoFrontal = cuadradoFrontal;
+                this.cuadradoTrasero = cuadradoTrasero;
+            }
+
+            dibujar(contexto) {
+                // Dibuja el cuadrado frontal
+                this.cuadradoFrontal.dibujar(contexto);
+
+                // Dibuja el cuadrado trasero
+                this.cuadradoTrasero.dibujar(contexto);
+
+                // Dibuja las líneas entre los cuadrados
+                for (let i = 0; i < this.cuadradoFrontal.puntos.length; i++) {
+                    let linea = new Linea(
+                        this.cuadradoFrontal.puntos[i][0], this.cuadradoFrontal.puntos[i][1],
+                        this.cuadradoTrasero.puntos[i][0], this.cuadradoTrasero.puntos[i][1]
+                    );
+                    linea.dibujar(contexto);
+                }
+            }
+        }
+
+        function dibujarPerspectiva(contexto) {
+            let cubo = new Cubo(
+                new Cuadrado([[100, 100], [200, 100], [200, 200], [100, 200]]),
+                new Cuadrado([[140, 140], [240, 140], [240, 240], [140, 240]])
+            );
+            cubo.dibujar(contexto);
+        }
+
+        function dibujarOrtografica(contexto) {
+            let cubo = new Cubo(
+                new Cuadrado([[100, 100], [200, 100], [200, 200], [100, 200]]),
+                new Cuadrado([[100, 100], [200, 100], [200, 200], [100, 200]])
+            );
+            cubo.dibujar(contexto);
+        }
+
+        function dibujarIsometrica(contexto) {
+            let cubo = new Cubo(
+                new Cuadrado([[150, 50], [250, 100], [200, 200], [100, 150]]),
+                new Cuadrado([[100, 150], [200, 200], [150, 300], [50, 250]])
+            );
+            cubo.dibujar(contexto);
+        }
+
+        window.onload = function () {
+            let canvasPerspectiva = document.getElementById('perspectiva');
+            let contextoPerspectiva = canvasPerspectiva.getContext('2d');
+            dibujarPerspectiva(contextoPerspectiva);
+
+            let canvasOrtografica = document.getElementById('ortografica');
+            let contextoOrtografica = canvasOrtografica.getContext('2d');
+            dibujarOrtografica(contextoOrtografica);
+
+            let canvasIsometrica = document.getElementById('isometrica');
+            let contextoIsometrica = canvasIsometrica.getContext('2d');
+            dibujarIsometrica(contextoIsometrica);
+        };
+    </script>
+</body>
+</html>
