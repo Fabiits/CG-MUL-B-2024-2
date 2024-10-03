@@ -3,13 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Three.js sin OrbitControls</title>
+    <title>Three.js con OrbitControls</title>
     <style>
         body { margin: 0; }
     </style>
 </head>
 <body>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.rawgit.com/mrdoob/three.js/r128/examples/js/controls/OrbitControls.js"></script>
     <script>
         const scene = new THREE.Scene();
         const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
@@ -17,6 +18,9 @@
         const renderer = new THREE.WebGLRenderer();
         renderer.setSize(window.innerWidth, window.innerHeight);
         document.body.appendChild(renderer.domElement);
+
+        // Configuración de OrbitControls
+        const controls = new THREE.OrbitControls(camera, renderer.domElement);
 
         const geometry = new THREE.BoxGeometry(1, 1, 1);
         const numCubes = Math.floor(Math.random() * 5) + 1;
@@ -38,6 +42,9 @@
         camera.position.z = 5;
 
         function animate() {
+            // Actualizar controles
+            controls.update();
+
             // Rotar todos los cubos de manera sincronizada
             scene.children.forEach(cube => {
                 cube.rotation.x += 0.01; // Ajusta la velocidad de rotación
@@ -59,4 +66,4 @@
         animate();
     </script>
 </body>
-</html>
+</html
