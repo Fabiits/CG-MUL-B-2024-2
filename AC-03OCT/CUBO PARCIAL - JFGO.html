@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Three.js Sin OrbitControls</title>
+    <style>
+        body { margin: 0; }
+    </style>
+</head>
+<body>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script>
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        
+        const renderer = new THREE.WebGLRenderer();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        document.body.appendChild(renderer.domElement);
+
+        const geometry = new THREE.BoxGeometry(1, 1, 1);
+        const numCubes = Math.floor(Math.random() * 5) + 1;
+        const initialPosition = -((numCubes - 1) * 2) / 2;
+        // Color verde fosforescente
+        const greenColor = 0x00FF00;
+        const cubes = []; // Array para almacenar los cubos
+        for (let i = 0; i < numCubes; i++) {
+            const material = new THREE.MeshBasicMaterial({ color: greenColor });
+            const cube = new THREE.Mesh(geometry, material);
+            cube.position.x = initialPosition + (i * 2);
+            scene.add(cube);
+            cubes.push(cube); // Guardar el cubo en el array
+            const wireframeGeometry = new THREE.EdgesGeometry(geometry); // Solo las aristas externas
+            const wireframeMaterial = new THREE.LineBasicMaterial({ color: 0xffffff, linewidth: 2 });
+            const wireframeCube = new THREE.LineSegments(wireframeGeometry, wireframeMaterial);
+            cube.add(wireframeCube);
+        }
+        camera.position.z = 5;
+
+        function animate() {
+            // Rotar todos los cubos de manera sincronizada
+            cubes.forEach(cube => {
+                cube.rotation.x += 0.01; // Ajusta la velocidad de rotación
+                cube.rotation.y += 0.01; // Ajusta la velocidad de rotación
+            });
+            renderer.render(scene, camera);
+            requestAnimationFrame(animate);
+        }
+
+        // Manejar el redimensionamiento de la ventana
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+
+        // Iniciar la animación
+        animate();
+    </script>
+</body>
+</html>
